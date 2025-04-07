@@ -4,6 +4,7 @@ import socketserver
 import http.server
 import logging
 import subprocess
+import re
 
 # Config
 PROXY_HOST = 'my-proxy.example.com'
@@ -14,16 +15,27 @@ BUFFER_SIZE = 8192
 # Logging
 logging.basicConfig(level=logging.DEBUG)
 
+
 def generate_kerberos_token():
     try:
-        command = ["klist", "-s"]
-        subprocess.run(command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return "Negotiate <placeholder, klist indicates ticket exist>"
+        command = ["klist"]
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        klist_output = result.stdout
+
+        # Search for a ticket relevant to the proxy service
+        target_service = f"HTTP/{PROXY_HOST}@" # This should be case-insensitive
+        if re.search(target_service, klist_output, re.IGNORECASE):
+            print("[DEBUG] Found relevant Kerberos ticket.")
+            return "Negotiate <placeholder, relevant ticket found>"
+        else:
+            print(f"[ERROR] No Kerberos ticket found for {target_service}.")
+            return None
+
     except subprocess.CalledProcessError:
-        print("[ERROR] Kerberos ticket not found. Run kinit.")
+        print("[ERROR] Kerberos ticket listing failed (klist error).")
         return None
     except FileNotFoundError:
-        print("[ERROR] klist not found, kerberos tools missing")
+        print("[ERROR] klist not found, kerberos tools missing.")
         return None
 
 class KerberosProxyHandler(http.server.BaseHTTPRequestHandler):
