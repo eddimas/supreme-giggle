@@ -2,10 +2,8 @@ import socket
 import select
 import socketserver
 import http.server
-from urllib.parse import urlparse
 import logging
-from requests_kerberos import HTTPKerberosAuth
-from urllib.parse import urlparse
+import subprocess
 
 # Config
 PROXY_HOST = 'my-proxy.example.com'
@@ -18,12 +16,14 @@ logging.basicConfig(level=logging.DEBUG)
 
 def generate_kerberos_token():
     try:
-        auth = HTTPKerberosAuth()
-        token = auth.generate_request_header(None, PROXY_HOST, is_preemptive=True)
-        print(f"[DEBUG] Generated token: {token[:80]}...")
-        return token
-    except Exception as e:
-        print(f"[ERROR] Kerberos token generation failed: {e}")
+        command = ["klist", "-s"]
+        subprocess.run(command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return "Negotiate <placeholder, klist indicates ticket exist>"
+    except subprocess.CalledProcessError:
+        print("[ERROR] Kerberos ticket not found. Run kinit.")
+        return None
+    except FileNotFoundError:
+        print("[ERROR] klist not found, kerberos tools missing")
         return None
 
 class KerberosProxyHandler(http.server.BaseHTTPRequestHandler):
