@@ -14,6 +14,16 @@
       "folder": "cypress/e2e"
     },
     {
+      "name": "wait for job completion",
+      "type": "api",
+      "url": "https://api.example.com/jobs/123/status",
+      "method": "GET",
+      "status_field": "state",
+      "desired_status": "complete",
+      "retries": 20,
+      "interval": 15
+    },
+    {
       "name": "notify jira",
       "type": "jira",
       "jira_url": "https://your-jira.cloud.atlassian.net/rest/api/2",
