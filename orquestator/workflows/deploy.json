@@ -8,6 +8,16 @@
       "venv": "scripts/python/process1/.venv"
     },
     {
+      "name": "start dev server",
+      "type": "npm",
+      "project": "scripts/node/cypress/project1",
+      "script": "dev",
+      "args": ["--port", "3000"],
+      "env": {
+        "CUSTOM_VAR": "hello"
+      }
+    },
+    {
       "name": "ui smoke tests",
       "type": "cypress",
       "project": "scripts/node/cypress/project1",
