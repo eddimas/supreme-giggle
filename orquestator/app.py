@@ -1,12 +1,13 @@
 import uuid
 import json
-import subprocess
 import threading
 from importlib import import_module
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query
+
 from persistence import save_run, load_run
+from fastapi.middleware.cors import CORSMiddleware
 
 # Folder where workflow definitions live
 WORKFLOWS = Path(__file__).parent / "workflows"
@@ -18,6 +19,12 @@ CYPRESS_MODULES = {
 }
 
 app = FastAPI()
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=["http://localhost:3000"],  # React’s dev server
+  allow_methods=["*"],
+  allow_headers=["*"],
+)
 
 def load_workflow(name: str) -> dict:
     """

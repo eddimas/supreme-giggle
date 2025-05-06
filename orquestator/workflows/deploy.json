@@ -11,27 +11,7 @@
       "name": "start dev server",
       "type": "npm",
       "project": "scripts/node/cypress/project1",
-      "script": "dev",
-      "args": ["--port", "3000"],
-      "env": {
-        "CUSTOM_VAR": "hello"
-      }
-    },
-    {
-      "name": "ui smoke tests",
-      "type": "cypress",
-      "project": "scripts/node/cypress/project1",
-      "folder": "cypress/e2e"
-    },
-    {
-      "name": "wait for job completion",
-      "type": "api",
-      "url": "https://api.example.com/jobs/123/status",
-      "method": "GET",
-      "status_field": "state",
-      "desired_status": "complete",
-      "retries": 20,
-      "interval": 15
+      "script": "cypress:run"
     },
     {
       "name": "notify jira",
