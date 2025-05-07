@@ -20,10 +20,14 @@ CYPRESS_MODULES = {
 
 app = FastAPI()
 app.add_middleware(
-  CORSMiddleware,
-  allow_origins=["http://localhost:3000"],  # React’s dev server
-  allow_methods=["*"],
-  allow_headers=["*"],
+    CORSMiddleware,
+    allow_origins=[
+      "http://localhost:3000",  # si sigues usando React
+      "http://localhost:4200",  # tu Angular dev server
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=True,
 )
 
 def load_workflow(name: str) -> dict:

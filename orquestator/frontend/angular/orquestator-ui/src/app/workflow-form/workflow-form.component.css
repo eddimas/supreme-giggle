@@ -1,0 +1,9 @@
+/* src/app/workflow-form/workflow-form.component.css */
+.full-width {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.error {
+  color: #b00020;
+  margin-top: 0.5rem;
+}
