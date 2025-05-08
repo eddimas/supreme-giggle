@@ -6,19 +6,12 @@ import shutil
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import datetime  # ← new import
 
 def execute(step: dict) -> dict:
     """
-    Runs an `npm run <script>` command in its own Node project.
-
-    Expects in your workflow step:
-      {
-        "type":       "npm",
-        "project":    "scripts/node/my-app",  # where package.json lives
-        "script":     "dev",                  # the npm script name
-        "args":       ["--port","3000"],      # optional extra args
-        "env": { … }                          # optional extra env vars
-      }
+    Runs an `npm run <script>` command in its own Node project,
+    returning stdout, stderr, exit code, plus timestamps and duration.
     """
     # 1) Locate & validate the project folder
     project = Path(step.get("project", ".")).resolve()
@@ -36,7 +29,7 @@ def execute(step: dict) -> dict:
     if not npm_path:
         return {"error": f"npm executable not found in PATH (looked for {npm_cmd})"}
 
-    # 4) Ensure deps are installed (optional; comment out if you manage deps yourself)
+    # 4) Ensure deps are installed
     install = subprocess.run(
         [npm_path, "install"],
         cwd=str(project),
@@ -50,7 +43,7 @@ def execute(step: dict) -> dict:
             "err": install.stderr
         }
 
-    # 5) Build env: inject node_modules/.bin first, plus any step‑specific env
+    # 5) Build env
     env = os.environ.copy()
     bin_dir = project / "node_modules" / ".bin"
     env["PATH"] = str(bin_dir) + os.pathsep + env.get("PATH", "")
@@ -64,7 +57,8 @@ def execute(step: dict) -> dict:
 
     cmd = [npm_path, "run", script] + step.get("args", [])
 
-    # 7) Execute
+    # 7) Execute and measure time
+    start_time = datetime.now()              # ← record start
     try:
         proc = subprocess.run(
             cmd,
@@ -75,11 +69,23 @@ def execute(step: dict) -> dict:
             encoding="utf-8",
             errors="replace"
         )
+        end_time = datetime.now()            # ← record end
+        duration = (end_time - start_time).total_seconds()
+        return {
+            "out":      proc.stdout,
+            "err":      proc.stderr,
+            "code":     proc.returncode,
+            "start":    start_time.isoformat(),
+            "end":      end_time.isoformat(),
+            "duration": duration
+        }
     except FileNotFoundError as e:
-        return {"error": f"Executable not found: {cmd[0]}", "exception": str(e)}
-
-    return {
-        "out":  proc.stdout,
-        "err":  proc.stderr,
-        "code": proc.returncode
-    }
+        end_time = datetime.now()
+        duration = (end_time - start_time).total_seconds()
+        return {
+            "error":     f"Executable not found: {cmd[0]}",
+            "exception": str(e),
+            "start":     start_time.isoformat(),
+            "end":       end_time.isoformat(),
+            "duration":  duration
+        }
