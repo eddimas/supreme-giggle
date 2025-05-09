@@ -25,3 +25,11 @@
   color: #b00020;
   margin-top: 1rem;
 }
+.step-duration {
+  font-size: 0.75rem;
+  background: #e0e0e0;
+  color: #333;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+  margin-left: auto;
+}

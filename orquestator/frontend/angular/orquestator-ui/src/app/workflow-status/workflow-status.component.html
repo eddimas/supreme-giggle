@@ -28,9 +28,14 @@
       >
       <div class="step-content">
         <span class="step-name">{{ step.name }}</span>
+        <!-- existing timestamp -->
         <div *ngIf="step.startTime && step.endTime" class="timestamp">
-          {{ step.startTime }} → {{ step.endTime }} ({{ step.duration }})
+          {{ step.startTime }} → {{ step.endTime }}
         </div>
+        <span *ngIf="step.duration" class="step-duration">
+          {{ step.duration }}
+        </span>
+
         <mat-progress-bar
           [mode]="
             i < run.current
