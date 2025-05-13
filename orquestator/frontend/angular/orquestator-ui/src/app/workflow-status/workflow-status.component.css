@@ -1,0 +1,35 @@
+/* src/app/workflow-status/workflow-status.component.css */
+.step {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.step-name {
+  font-weight: 600;
+}
+.timestamp {
+  font-size: 0.875rem;
+  color: #555;
+  margin-left: 2rem;
+}
+.logs {
+  background: #101010;
+  color: #e0e0e0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  max-height: 200px;
+  overflow: auto;
+}
+.error {
+  color: #b00020;
+  margin-top: 1rem;
+}
+.step-duration {
+  font-size: 0.75rem;
+  background: #e0e0e0;
+  color: #333;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+  margin-left: auto;
+}

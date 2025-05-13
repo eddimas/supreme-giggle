@@ -1,0 +1,56 @@
+<mat-card class="mb-6">
+  <mat-card-header>
+    <mat-card-title>Run "{{ run?.name }}"</mat-card-title>
+    <button mat-button (click)="reset.emit()">New run</button>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-chip-set>
+      <mat-chip
+        selected
+        [color]="
+          run.status === 'failed'
+            ? 'warn'
+            : run.status === 'completed'
+            ? 'primary'
+            : 'accent'
+        "
+      >
+        {{ run.status.toUpperCase() }}
+      </mat-chip>
+    </mat-chip-set>
+    <div *ngFor="let step of run.steps; let i = index" class="step">
+      <mat-icon *ngIf="i < run.current">check_circle</mat-icon>
+      <mat-icon *ngIf="i === run.current && run.status === 'running'"
+        >autorenew</mat-icon
+      >
+      <mat-icon *ngIf="run.status === 'failed' && i === run.current"
+        >error</mat-icon
+      >
+      <div class="step-content">
+        <span class="step-name">{{ step.name }}</span>
+        <!-- existing timestamp -->
+        <div *ngIf="step.startTime && step.endTime" class="timestamp">
+          {{ step.startTime }} → {{ step.endTime }}
+        </div>
+        <span *ngIf="step.duration" class="step-duration">
+          {{ step.duration }}
+        </span>
+
+        <mat-progress-bar
+          [mode]="
+            i < run.current
+              ? 'determinate'
+              : i === run.current && run.status === 'running'
+              ? 'indeterminate'
+              : 'determinate'
+          "
+          [value]="i < run.current ? 100 : 0"
+        >
+        </mat-progress-bar>
+      </div>
+    </div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+    <h3>Logs</h3>
+    <pre class="logs">{{ run.log | json }}</pre>
+  </mat-card-content>
+</mat-card>

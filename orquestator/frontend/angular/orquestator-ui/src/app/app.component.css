@@ -1,0 +1,10 @@
+/* src/app/app.component.css */
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}

@@ -1,0 +1,26 @@
+{
+  "name": "deploy",
+  "steps": [
+    {
+      "name": "unit tests",
+      "type": "python",
+      "script": "scripts/python/process1/main.py",
+      "venv": "scripts/python/process1/.venv"
+    },
+    {
+      "name": "start dev server",
+      "type": "npm",
+      "project": "scripts/node/cypress/project1",
+      "script": "cypress:run"
+    },
+    {
+      "name": "notify jira",
+      "type": "jira",
+      "jira_url": "https://your-jira.cloud.atlassian.net/rest/api/2",
+      "user": "jira-user@example.com",
+      "token": "YOUR_API_TOKEN",
+      "issue": "PROJ-123",
+      "comment": "✅ Deployment complete, all tests passed"
+    }
+  ]
+}
